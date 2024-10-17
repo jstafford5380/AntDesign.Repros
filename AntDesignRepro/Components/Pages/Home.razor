@@ -1,0 +1,61 @@
+﻿@page "/"
+
+<PageTitle>Repro</PageTitle>
+
+<Button OnClick="@(() => ToggleObject())">Toggle</Button>
+
+<Tabs>
+    <TabPane Tab="Tab 1" Key="tab1">
+        @if (ShowPage)
+        {
+            <Text>Success</Text>
+        }
+        else
+        {
+            <Spin />
+        }
+    </TabPane>
+    
+    <TabPane Tab="Tab 2" Key="tab2">
+        <Text>Foobar</Text>
+    </TabPane>
+</Tabs>
+
+<br />
+
+<div>
+    <ul>
+        <li>Start: _someObject is null</li>
+        @foreach (var message in _messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
+
+@code {
+
+    private bool ShowPage => _someObject is not null;
+    private object? _someObject = null;
+    private readonly List<string> _messages = [];
+
+    private async Task ToggleObject()
+    {
+        if (_someObject is null)
+        {
+            _someObject = new { };
+            const string msg = "_someObject is no longer null";
+            _messages.Add(msg);
+            Console.WriteLine(msg);
+        }
+        else
+        {
+            _someObject = null;
+            const string msg = "_someObject is now null";
+            _messages.Add(msg);
+            Console.WriteLine(msg);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+}
